@@ -42,6 +42,11 @@ class PlantAnalysisGUI(tk.Tk):
         self.top_frame.pack(side='top', fill=tk.X)
         self.make_buttons(self.top_frame)
 
+        #make a second frame to hold buttont to manipulate data
+        self.manip_frame = tk.Frame(self, height=35)
+        self.manip_frame.pack(side='top', fill=tk.X)
+        self.make_manip_buttons(self.manip_frame)
+
         # make graph area to plot later
         self.data_area = tkinter_pyplot.PyplotEmbed(self, self.data)
         self.data_area.pack(side='top', expand=True, fill=tk.BOTH)
@@ -57,6 +62,13 @@ class PlantAnalysisGUI(tk.Tk):
         ttk.Button(_frame, text='Delete all', command=self.delete_data).pack(side='left')
 
         ttk.Button(_frame, text='Fit Data', command=self.fit_data).pack(side='left')
+
+    def make_manip_buttons(self, frame):
+        ttk.Button(frame, text='Current test', command=self.show_currents).pack(side='left')
+        pass
+
+    def show_currents(self):
+        pass
 
     def fit_data(self):
         print('fit data')
@@ -82,12 +94,12 @@ class PlantAnalysisGUI(tk.Tk):
         for i in range(1, num_new_lines_to_add+1):
             # print('last label: ', self.last_label)
             self.data_area.plot(self.data.decimated_data[-i], data.keys()[-i]+" "+self.last_label)
-            self.make_data_summary_frame(self.data, i)
+            self.make_data_summary_frame(self.data, i-1)
 
     def make_data_analysis_frame(self, tk_frame):
         pass
 
-    def make_data_summary_frame(self, data, _index):
+    def make_data_summary_frame(self, data: pyplot_data.PyplotData_v2, _index: int):
         new_frame = tk.Frame(self.bottom_frame, height=25)
         new_frame.pack(side='top', fill=tk.X)
         tk.Label(new_frame, text="baseline = {0:.2f}      maximum amplitude = {1:.2f}"
@@ -95,6 +107,9 @@ class PlantAnalysisGUI(tk.Tk):
 
         # make a spinbox to let the user move the time series around
         time_shifter = tk.DoubleVar()
+        print("time shifter: ", data.time_start[-1])
+        time_shifter.set(data.time_start[_index])
+        # time_shifter.trace('w', lambda: self.data_area.time_shift(index-2, time_shifter.get()))
         index = self.data_area.index - _index - 1
         tk.Spinbox(new_frame, textvariable=time_shifter,
                    from_=-100, to=100, increment=0.01,

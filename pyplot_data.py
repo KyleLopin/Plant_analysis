@@ -28,8 +28,11 @@ class PyplotData_v2(object):
 
     def append(self, data, label):
         data.index = data.index.map(float)
-        for data_key in data:
-            self._append_single_series(data, data_key)
+        for i, data_key in enumerate(data):  # hackish
+            if i == 0:
+                self._append_single_series(data, data_key)
+            else:
+                self._append_single_series(data, data_key, time_shift=self.time_start[-1])
 
         # data.index = data.index.map(float)
         # print('data in append: {0}'.format(data))
@@ -64,7 +67,7 @@ class PyplotData_v2(object):
         # self.decimated_data.append(time_shifted_data.rolling(10).mean())
         # self.heavy_decimate_data.append(time_shifted_data.rolling(1000).mean())
 
-    def _append_single_series(self, data, key):
+    def _append_single_series(self, data, key, time_shift = None):
         """ Take a data frame and append it to raw data anc make the other data structures needed
         :param data:  data frame of the raw acquired data
         """
@@ -86,8 +89,10 @@ class PyplotData_v2(object):
         threshold = max_amp*START_THRESHOLD_RATIO  # calculate the threshold where the AP starts
         hold = heavy_rolling_mean[key][1:] < threshold  # use heavy roll to eliminate picking
         # up the transient response from hitting the plant
-        time_shift = hold[hold == True].index[0]  # find where the data first crosses the threhold
+        if not time_shift:
+            time_shift = hold[hold == True].index[0]  # find where the data first crosses the threhold
         self.time_start.append(time_shift)
+        print("made data time_shift: ", time_shift)
 
         time_shifted_data = baseline_adjuct.copy()
         time_shifted_data.index = time_shifted_data.index - time_shift

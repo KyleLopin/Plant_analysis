@@ -62,9 +62,10 @@ class PyplotEmbed(tk.Frame):
         self.index = 1
         self.axis.legend()
 
-    def time_shift(self, data_index, time_to_shift):
+    def time_shift(self, data_index: int, time_to_shift: float):
+        adj_time_shift = time_to_shift - self.data.time_start[data_index]
 
-        x_data = self.data.adjusted_data[data_index].index - time_to_shift
+        x_data = self.data.adjusted_data[data_index].index - adj_time_shift
         self.lines[data_index].set_xdata(x_data)
         self.canvas.draw()
 

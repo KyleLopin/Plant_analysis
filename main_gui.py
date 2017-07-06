@@ -1,5 +1,6 @@
 """ Graphical User Interface to analyze plant electrophysiological data
 """
+# TODO: encapsulation is horrible
 
 # standard libraries
 import array
@@ -11,14 +12,20 @@ from tkinter import ttk
 from tkinter import filedialog
 import sys
 #installed libraries
+print('1')
 import numpy as np
+print('2')
 import pandas as pd
+print('3')
 
 #local files
 import analysis_functions as funcs
 import option_menu_gui as option_menu
+print('4')
 import pyplot_data
+print('5')
 import tkinter_pyplot
+print('6')
 
 __author__ = 'Kyle Vitautas Lopin'
 
@@ -33,6 +40,7 @@ class PlantAnalysisGUI(tk.Tk):
     def __init__(self, parent=None):
         tk.Tk.__init__(self, parent)
         self.last_dir = None
+        self.display_type = 'decimated'
         self.data = pyplot_data.PyplotData_v2()  # make a list of panda data frames
         # make menu bar
         option_menu.OptionMenu(self)
@@ -43,6 +51,7 @@ class PlantAnalysisGUI(tk.Tk):
         self.make_buttons(self.top_frame)
 
         #make a second frame to hold buttont to manipulate data
+        print('1')
         self.manip_frame = tk.Frame(self, height=35)
         self.manip_frame.pack(side='top', fill=tk.X)
         self.make_manip_buttons(self.manip_frame)
@@ -52,6 +61,7 @@ class PlantAnalysisGUI(tk.Tk):
         self.data_area.pack(side='top', expand=True, fill=tk.BOTH)
 
         # make frame to show data statistics on the bottom
+        print('2')
         self.bottom_frame = tk.Frame(self)
         self.bottom_frame.pack(side='top', fill=tk.X)
         self.data_info_frames = []
@@ -65,7 +75,21 @@ class PlantAnalysisGUI(tk.Tk):
 
     def make_manip_buttons(self, frame):
         ttk.Button(frame, text='Current test', command=self.show_currents).pack(side='left')
-        pass
+        self.display_type_button = ttk.Button(frame, text='Regular Data View', command=self.toggle_display_type)
+        self.display_type_button.pack(side='left')
+
+    def toggle_display_type(self):
+        print('setting display tupe')
+        if self.display_type == 'heavy':  # button should be pressed already
+            print('ll')
+            self.display_type_button.config(text='Regular Data View')
+            self.display_type = 'decimated'
+        elif self.display_type == 'decimated':
+            print('hh')
+            self.display_type_button.config(text = 'Quick Data View')
+            self.display_type = 'heavy'
+        else:
+            raise Exception
 
     def show_currents(self):
         pass
@@ -93,7 +117,10 @@ class PlantAnalysisGUI(tk.Tk):
         num_new_lines_to_add = data.shape[1]
         for i in range(1, num_new_lines_to_add+1):
             # print('last label: ', self.last_label)
-            self.data_area.plot(self.data.decimated_data[-i], data.keys()[-i]+" "+self.last_label)
+            if self.display_type == 'decimated':
+                self.data_area.plot(self.data.decimated_data[-i], data.keys()[-i]+" "+self.last_label)
+            elif self.display_type == 'heavy':
+                self.data_area.plot(self.data.heavy_decimate_data[-i], data.keys()[-i] + " " + self.last_label)
             self.make_data_summary_frame(self.data, i-1)
 
     def make_data_analysis_frame(self, tk_frame):

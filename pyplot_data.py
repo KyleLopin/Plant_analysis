@@ -67,7 +67,7 @@ class PyplotData_v2(object):
         # self.decimated_data.append(time_shifted_data.rolling(10).mean())
         # self.heavy_decimate_data.append(time_shifted_data.rolling(1000).mean())
 
-    def _append_single_series(self, data, key, time_shift = None):
+    def _append_single_series(self, data, key, time_shift=None):
         """ Take a data frame and append it to raw data anc make the other data structures needed
         :param data:  data frame of the raw acquired data
         """

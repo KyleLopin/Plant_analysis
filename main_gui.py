@@ -9,7 +9,7 @@ import pickle
 import os
 import tkinter as tk
 from tkinter import ttk
-from tkinter import filedialog
+
 import sys
 #installed libraries
 print('1')
@@ -20,6 +20,7 @@ print('3')
 
 #local files
 import analysis_functions as funcs
+import data_handler as dh
 import option_menu_gui as option_menu
 print('4')
 import pyplot_data
@@ -118,9 +119,9 @@ class PlantAnalysisGUI(tk.Tk):
         for i in range(1, num_new_lines_to_add+1):
             # print('last label: ', self.last_label)
             if self.display_type == 'decimated':
-                self.data_area.plot(self.data.decimated_data[-i], data.keys()[-i]+" "+self.last_label)
+                self.data_area.plot(self.data.decimated_data[-i], data.keys()[-i]+" "+label)
             elif self.display_type == 'heavy':
-                self.data_area.plot(self.data.heavy_decimate_data[-i], data.keys()[-i] + " " + self.last_label)
+                self.data_area.plot(self.data.heavy_decimate_data[-i], data.keys()[-i] + " " + label)
             self.make_data_summary_frame(self.data, i-1)
 
     def make_data_analysis_frame(self, tk_frame):
@@ -147,9 +148,8 @@ class PlantAnalysisGUI(tk.Tk):
         self.data_info_frames.append(new_frame)
 
     def open_data(self):
-        _filename = open_file('open', self.last_dir)
+        _filename = dh.open_file('open')
         # _filename = '/Users/Prattana_Nut/Documents/DATA2017/170410/A170410_002.csv'
-        self.last_dir = os.path.dirname(_filename)
         label = os.path.basename(_filename).split('.')[0]
         self.last_label = label
         # print('filename: ', _filename)
@@ -193,24 +193,6 @@ class PlantAnalysisGUI(tk.Tk):
         return pd_dataframe
 
 
-def open_file(_type, last_dir=None):
-    """ Make a method to return an open file or a file name depending on the type asked for
-    :param _type: what type of file dialog to use
-    :return: the filename
-    """
-    # Make the options for the save file dialog box for the user
-    file_opt = options = {}
-    options['defaultextension'] = ".csv"
-    if last_dir:
-        options['initialdir'] = last_dir
-    options['filetypes'] = [('All files', '*.*'), ("Comma separate values", "*.csv"), ("Pickle File", "*.pkl")]
-    if _type == 'saveas':
-        # Ask the user what name to save the file as
-        _file = filedialog.asksaveasfile(mode='wb', **file_opt)
-    elif _type == 'open':
-        _filename = filedialog.askopenfilename(**file_opt)
-        return _filename
-    return _file
 
 
 if __name__ == '__main__':

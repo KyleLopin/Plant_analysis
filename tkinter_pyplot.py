@@ -27,6 +27,7 @@ class PyplotEmbed(tk.Frame):
         tk.Frame.__init__(self, master=master)
         self.index = 1
         self.lines = []
+        self.labels = []
         self.vert_line = None
         self.data = data
         self.cursor_connect = None
@@ -48,6 +49,7 @@ class PyplotEmbed(tk.Frame):
         # self.data.plot(ax=self.graph_area.axis, label='channel {0}'.format(self.index))
         # line = self.axis.plot(data.index, data['voltage'], label=_label)[0]
         line = self.axis.plot(data.index, data, label=_label)[0]
+        self.labels.append(_label)
         self.lines.append(line)
         self.axis.legend()
         self.index += 1
@@ -61,6 +63,33 @@ class PyplotEmbed(tk.Frame):
         self.canvas.draw()
         self.index = 1
         self.axis.legend()
+
+    def delete_some_data(self, picks):
+        print('delete in graph: ', picks)
+        for index in reversed(picks):
+            self.delete_line(index)
+
+    def delete_line(self, _index):
+        self.index -= 1
+        del self.labels[_index]
+        line = self.lines.pop(_index)
+        line.remove()
+        del line
+        self.update_legend()
+
+    def update_legend(self):
+        """ Update the legend and redraw the graph
+                """
+        handle, labels = self.axis.get_legend_handles_labels()
+
+        self.axis.legend(handle, self.labels,
+                                    loc='best',
+                                    # bbox_to_anchor=(1, 0.5),
+                                    # title='Data series',
+                                    prop={'size': 10},
+                                    fancybox=True)  # not adding all this screws it up
+        # up for some reason
+        self.canvas.show()  # update the canvas where the data is being shown
 
     def time_shift(self, data_index: int, time_to_shift: float):
         adj_time_shift = time_to_shift - self.data.time_start[data_index]

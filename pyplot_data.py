@@ -25,6 +25,7 @@ class PyplotData_v2(object):
         self.average_max = []  # save the max amplitude of the trace
         self.time_start = []  # save when the action potential starts
         self.normed = False
+        self.len = 0
 
     def append(self, data, label):
         data.index = data.index.map(float)
@@ -100,3 +101,20 @@ class PyplotData_v2(object):
 
         self.decimated_data.append(time_shifted_data.rolling(10).mean())
         self.heavy_decimate_data.append(time_shifted_data.rolling(1000).mean())
+        self.len += 1
+
+    def delete_line(self, _index):
+        del self.adjusted_data[_index]
+        del self.decimated_data[_index]
+        del self.heavy_decimate_data[_index]
+        del self.baselines[_index]
+        del self.average_max[_index]
+        del self.time_start[_index]
+        self.len -= 1
+
+    def delete_some_data(self, picks):
+        print('delete in data: ', picks)
+        for index in reversed(picks):
+            self.delete_line(index)
+
+

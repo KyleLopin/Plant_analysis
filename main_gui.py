@@ -11,6 +11,7 @@ from tkinter import ttk
 
 # local files
 import analysis_functions as funcs
+import change_top
 import data_handler as dh
 import option_menu_gui as option_menu
 import pyplot_data
@@ -60,8 +61,9 @@ class PlantAnalysisGUI(tk.Tk):
 
     def make_buttons(self, _frame):
         ttk.Button(_frame, text='Open', command=self.open_and_display_data).pack(side='left')
-        ttk.Button(_frame, text='Delete all', command=self.delete_data).pack(side='left')
-
+        ttk.Button(_frame, text='Delete All', command=self.delete_data).pack(side='left')
+        ttk.Button(_frame, text='Delete Some Data',
+                   command=lambda: change_top.UserDeleteSomeData(self)).pack(side='left')
         ttk.Button(_frame, text='Fit Data', command=self.fit_data).pack(side='left')
 
     def make_manipulate_buttons(self, frame):
@@ -134,6 +136,13 @@ class PlantAnalysisGUI(tk.Tk):
                     ).pack(side='left')
 
         self.data_info_frames.append(new_frame)
+
+    def delete_some_data(self, picks):
+        for index in reversed(picks):
+            # del self.data_info_frames[index]
+            self.data_info_frames[index].pack_forget()
+            self.data_info_frames[index].destroy()
+        # self.update()
 
 
 if __name__ == '__main__':

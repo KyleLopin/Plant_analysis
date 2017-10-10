@@ -8,7 +8,9 @@ from tkinter import ttk
 __author__ = 'Kyle Vitautas Lopin'
 
 
-COLOR_CHOICES = ['black', 'gray', 'red', 'green', 'blue', 'orange', 'magenta']
+COLOR_CHOICES = ['black', 'gray', 'red', 'green', 'blue', 'orange', 'magenta',
+                 'darkred', 'lawngreen', 'forestgreen', 'mediumblue', 'darkslateblue',
+                 'darkviolet', 'darkorchid']
 
 
 class UserDeleteSomeData(tk.Toplevel):
@@ -80,6 +82,8 @@ class ChangeDataLegend(tk.Toplevel):
         tk.Toplevel.__init__(self, master=master)
         self.legend_entries = []
         self.color_picks = []
+        self.line_styles = []
+        self.custom_colors = []
         tk.Label(self, text="Configure Data Legend").pack(side="top")
         # make a section to modify each line plotted so far
         for i in range(master.data.index):
@@ -87,7 +91,7 @@ class ChangeDataLegend(tk.Toplevel):
             horizontal_frame.pack(side="top")
             tk.Label(horizontal_frame, text="Chose color:").pack(side='left')
             self.color_picks.append(tk.StringVar())
-            self.color_picks[i].set(master.data.colors[i])
+            self.color_picks[i].set(master.data_area.colors[i])
             drop_menu = tk.OptionMenu(horizontal_frame,
                                       self.color_picks[i],
                                       *COLOR_CHOICES)
@@ -96,8 +100,9 @@ class ChangeDataLegend(tk.Toplevel):
                      text="Change data label:").pack(side='left')
             self.legend_entries.append(tk.StringVar())
             self.legend_entries[i].set(master.data_area.labels[i])
-            tk.Entry(horizontal_frame,
+            tk.Entry(horizontal_frame, width=40,
                      textvariable=self.legend_entries[i]).pack(side="left")
+            # tk.Lable(horizontal_frame, text="Line style:").pack(side='bottom')
         bottom_frame = tk.Frame(self)
         bottom_frame.pack(side='bottom')
         tk.Button(bottom_frame,
@@ -117,9 +122,9 @@ class ChangeDataLegend(tk.Toplevel):
         """
         i = 0
         for pick in self.color_picks:
-            _master.data.colors[i] = pick.get()
+            _master.data_area.colors[i] = pick.get()
             graph.change_line_color(pick.get(), i)
-            _master.data.label[i] = self.legend_entries[i].get()
+            _master.data_area.labels[i] = self.legend_entries[i].get()
             i += 1
         graph.update_legend()
 

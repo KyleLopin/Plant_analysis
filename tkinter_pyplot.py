@@ -20,14 +20,14 @@ LEGEND_SPACE_RATIO = 0.9
 
 
 class PyplotEmbed(tk.Frame):
-    """
-    Class that will make a tkinter frame with a matplotlib plot area embedded in the frame
+    """ Class that will make a tkinter frame with a matplotlib plot area embedded in the frame
     """
     def __init__(self, master, data):
         tk.Frame.__init__(self, master=master)
         self.index = 1
         self.lines = []
         self.labels = []
+        self.colors = []
         self.vert_line = None
         self.data = data
         self.cursor_connect = None
@@ -49,7 +49,7 @@ class PyplotEmbed(tk.Frame):
         # self.data.plot(ax=self.graph_area.axis, label='channel {0}'.format(self.index))
         # line = self.axis.plot(data.index, data['voltage'], label=_label)[0]
         line = self.axis.plot(data.index, data, label=_label)[0]
-        self.data.colors.append(line.get_color())
+        self.colors.append(line.get_color())
         self.labels.append(_label)
         self.lines.append(line)
         self.axis.legend()
@@ -78,9 +78,13 @@ class PyplotEmbed(tk.Frame):
         del line
         self.update_legend()
 
+    def change_line_color(self, _color, index):
+        print('change line:', index, _color)
+        self.lines[index].set_color(_color)
+        self.colors[index] = _color
+
     def update_legend(self):
-        """ Update the legend and redraw the graph
-                """
+        """ Update the legend and redraw the graph """
         handle, labels = self.axis.get_legend_handles_labels()
 
         self.axis.legend(handle, self.labels,
@@ -105,7 +109,6 @@ class PyplotEmbed(tk.Frame):
         self.cursor_connect = self.canvas.mpl_connect('motion_notify_event', self.onMouseMove)
         self.canvas.mpl_connect('button_press_event', self.onclick)
         self.canvas.show()
-
 
     def onMouseMove(self, event):
         if not event.xdata:  # mouse is not over the plot area

@@ -24,7 +24,6 @@ class PyplotData_v2(object):
         self.baselines = []  # save what the baseline of the recordings are
         self.average_max = []  # save the max amplitude of the trace
         self.time_start = []  # save when the action potential starts
-        self.colors = []
         self.normed = False
         self.index = 0
 

@@ -70,6 +70,8 @@ class PlantAnalysisGUI(tk.Tk):
         ttk.Button(frame, text='Current test', command=self.show_currents).pack(side='left')
         self.display_type_button = ttk.Button(frame, text='Regular Data View', command=self.toggle_display_type)
         self.display_type_button.pack(side='left')
+        ttk.Button(frame, text='Change Line Style',
+                   command=lambda: change_top.ChangeDataLegend(self)).pack(side='left')
 
     def toggle_display_type(self):
         print('setting display tupe')

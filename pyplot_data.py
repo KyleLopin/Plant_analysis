@@ -24,8 +24,9 @@ class PyplotData_v2(object):
         self.baselines = []  # save what the baseline of the recordings are
         self.average_max = []  # save the max amplitude of the trace
         self.time_start = []  # save when the action potential starts
+        self.colors = []
         self.normed = False
-        self.len = 0
+        self.index = 0
 
     def append(self, data, label):
         data.index = data.index.map(float)
@@ -101,7 +102,7 @@ class PyplotData_v2(object):
 
         self.decimated_data.append(time_shifted_data.rolling(10).mean())
         self.heavy_decimate_data.append(time_shifted_data.rolling(1000).mean())
-        self.len += 1
+        self.index += 1
 
     def delete_line(self, _index):
         del self.adjusted_data[_index]
@@ -110,7 +111,7 @@ class PyplotData_v2(object):
         del self.baselines[_index]
         del self.average_max[_index]
         del self.time_start[_index]
-        self.len -= 1
+        self.index -= 1
 
     def delete_some_data(self, picks):
         print('delete in data: ', picks)

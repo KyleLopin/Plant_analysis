@@ -8,6 +8,9 @@ from tkinter import ttk
 __author__ = 'Kyle Vitautas Lopin'
 
 
+COLOR_CHOICES = ['black', 'gray', 'red', 'green', 'blue', 'orange', 'magenta']
+
+
 class UserDeleteSomeData(tk.Toplevel):
     def __init__(self, master):
         tk.Toplevel.__init__(self, master)
@@ -65,4 +68,59 @@ class UserDeleteSomeData(tk.Toplevel):
         master.data.delete_some_data(_list)
         master.data_area.delete_some_data(_list)
         master.delete_some_data(_list)
+        self.destroy()
+
+
+class ChangeDataLegend(tk.Toplevel):
+    """ Make a toplevel that will allow the user to change the color of the data in the legend
+    """
+
+    def __init__(self, master):
+        graph = master.data_area
+        tk.Toplevel.__init__(self, master=master)
+        self.legend_entries = []
+        self.color_picks = []
+        tk.Label(self, text="Configure Data Legend").pack(side="top")
+        # make a section to modify each line plotted so far
+        for i in range(master.data.index):
+            horizontal_frame = tk.Frame(self)
+            horizontal_frame.pack(side="top")
+            tk.Label(horizontal_frame, text="Chose color:").pack(side='left')
+            self.color_picks.append(tk.StringVar())
+            self.color_picks[i].set(master.data.colors[i])
+            drop_menu = tk.OptionMenu(horizontal_frame,
+                                      self.color_picks[i],
+                                      *COLOR_CHOICES)
+            drop_menu.pack(side='left')
+            tk.Label(horizontal_frame,
+                     text="Change data label:").pack(side='left')
+            self.legend_entries.append(tk.StringVar())
+            self.legend_entries[i].set(master.data_area.labels[i])
+            tk.Entry(horizontal_frame,
+                     textvariable=self.legend_entries[i]).pack(side="left")
+        bottom_frame = tk.Frame(self)
+        bottom_frame.pack(side='bottom')
+        tk.Button(bottom_frame,
+                  text='Save',
+                  width=10,
+                  command=lambda: self.save(master, graph)).pack(side='left', padx=10,
+                                                                 fill=tk.X, expand=1)
+        tk.Button(bottom_frame,
+                  text='Exit',
+                  width=10,
+                  command=self.destroy).pack(side='left', padx=10, fill=tk.X, expand=1)
+
+    def save(self, _master, graph):
+        """  The user wants to save changes to the data style and legend, impliment it here
+        :param _master: master where the data is stored
+        :param graph: graph area
+        """
+        i = 0
+        for pick in self.color_picks:
+            _master.data.colors[i] = pick.get()
+            graph.change_line_color(pick.get(), i)
+            _master.data.label[i] = self.legend_entries[i].get()
+            i += 1
+        graph.update_legend()
+
         self.destroy()

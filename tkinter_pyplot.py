@@ -49,6 +49,7 @@ class PyplotEmbed(tk.Frame):
         # self.data.plot(ax=self.graph_area.axis, label='channel {0}'.format(self.index))
         # line = self.axis.plot(data.index, data['voltage'], label=_label)[0]
         line = self.axis.plot(data.index, data, label=_label)[0]
+        self.data.colors.append(line.get_color())
         self.labels.append(_label)
         self.lines.append(line)
         self.axis.legend()

@@ -16,26 +16,27 @@ def open_data():
     _filename = open_file('open')
     label = os.path.basename(_filename).split('.')[0]
     logging.info("opening file: {0}".format(label))
-    if _filename:
-        with open(_filename, 'rb') as _file:
-            if ".csv" in _filename:
-                pd_data = pd.read_csv(_filename, index_col='time')[0.0001:]
-                pd_data.rename(index=str, columns={'voltage': label}, inplace=True)
-                return pd_data, ""
-            elif ".pkl" in _filename:
-                data = pickle.load(_file)
-                data_frame = open_pickled_data(data)
-                return data_frame, label
+    if not _filename:
+        return None, None
+    with open(_filename, 'rb') as _file:
+        if ".csv" in _filename:
+            pd_data = pd.read_csv(_filename, index_col='time')[0.0001:]
+            pd_data.rename(index=str, columns={'voltage': label}, inplace=True)
+            return pd_data, ""
+        elif ".pkl" in _filename:
+            data = pickle.load(_file)
+            data_frame = open_pickled_data(data)
+            return data_frame, label
 
 
 def open_pickled_data(data_struct):
-    # print('open pickled, len data: {0}'.format(len('channel 0')))
+    # print('open pickled, index data: {0}'.format(index('channel 0')))
 
     time_period = 1.0 / data_struct['sample rate']
 
     channel_keys = [x for x in data_struct.keys() if 'channel' in x]
-    # print('len data: {0}; len time series: {1}; channel keys = {2}'.format(
-    #     len_series, len(time_series), channel_keys
+    # print('index data: {0}; index time series: {1}; channel keys = {2}'.format(
+    #     len_series, index(time_series), channel_keys
     # ))
     pd_data_struct = {}
     for ch_key in channel_keys:

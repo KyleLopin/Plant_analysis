@@ -3,30 +3,19 @@
 # TODO: encapsulation is horrible
 
 # standard libraries
-import array
 import logging
-import pickle
-import os
 import tkinter as tk
 from tkinter import ttk
 
-import sys
-#installed libraries
-print('1')
-import numpy as np
-print('2')
-import pandas as pd
-print('3')
+# installed libraries
 
-#local files
+# local files
 import analysis_functions as funcs
 import data_handler as dh
 import option_menu_gui as option_menu
-print('4')
 import pyplot_data
-print('5')
 import tkinter_pyplot
-print('6')
+
 
 __author__ = 'Kyle Vitautas Lopin'
 
@@ -35,6 +24,7 @@ PROGRAM_NAME = "Data Analysis"
 
 logging.basicConfig(level=logging.DEBUG,
                     format="%(levelname)s %(module)s %(lineno)d: %(message)s")
+
 
 class PlantAnalysisGUI(tk.Tk):
 
@@ -51,11 +41,11 @@ class PlantAnalysisGUI(tk.Tk):
         self.top_frame.pack(side='top', fill=tk.X)
         self.make_buttons(self.top_frame)
 
-        #make a second frame to hold buttont to manipulate data
+        # make a second frame to hold button to manipulate data
         print('1')
-        self.manip_frame = tk.Frame(self, height=35)
-        self.manip_frame.pack(side='top', fill=tk.X)
-        self.make_manip_buttons(self.manip_frame)
+        self.manipulation_frame = tk.Frame(self, height=35)
+        self.manipulation_frame.pack(side='top', fill=tk.X)
+        self.make_manipulate_buttons(self.manipulation_frame)
 
         # make graph area to plot later
         self.data_area = tkinter_pyplot.PyplotEmbed(self, self.data)
@@ -74,7 +64,7 @@ class PlantAnalysisGUI(tk.Tk):
 
         ttk.Button(_frame, text='Fit Data', command=self.fit_data).pack(side='left')
 
-    def make_manip_buttons(self, frame):
+    def make_manipulate_buttons(self, frame):
         ttk.Button(frame, text='Current test', command=self.show_currents).pack(side='left')
         self.display_type_button = ttk.Button(frame, text='Regular Data View', command=self.toggle_display_type)
         self.display_type_button.pack(side='left')
@@ -87,7 +77,7 @@ class PlantAnalysisGUI(tk.Tk):
             self.display_type = 'decimated'
         elif self.display_type == 'decimated':
             print('hh')
-            self.display_type_button.config(text = 'Quick Data View')
+            self.display_type_button.config(text='Quick Data View')
             self.display_type = 'heavy'
         else:
             raise Exception
@@ -102,7 +92,6 @@ class PlantAnalysisGUI(tk.Tk):
             return
         self.data_area.get_fit_start()
 
-
     def delete_data(self):
         self.data = pyplot_data.PyplotData_v2()
         self.data_area.delete_all()
@@ -111,9 +100,8 @@ class PlantAnalysisGUI(tk.Tk):
             _frame.pack_forget()
             _frame.destroy()
 
-
     def open_and_display_data(self):
-        data, label = self.open_data()
+        data, label = dh.open_data()
         self.data.append(data, label)
         num_new_lines_to_add = data.shape[1]
         for i in range(1, num_new_lines_to_add+1):
@@ -146,53 +134,6 @@ class PlantAnalysisGUI(tk.Tk):
                     ).pack(side='left')
 
         self.data_info_frames.append(new_frame)
-
-    def open_data(self):
-        _filename = dh.open_file('open')
-        # _filename = '/Users/Prattana_Nut/Documents/DATA2017/170410/A170410_002.csv'
-        label = os.path.basename(_filename).split('.')[0]
-        self.last_label = label
-        # print('filename: ', _filename)
-        logging.info("opening file: {0}".format(label))
-        if _filename:
-            # remember last directory
-            with open(_filename, 'rb') as _file:
-
-                if ".csv" in _filename:
-                    pd_data = pd.read_csv(_filename, index_col='time')[0.0001:]
-                    pd_data.rename(index=str, columns={'voltage': label}, inplace=True)
-                    return pd_data, ""
-                elif ".pkl" in _filename:
-                    data = pickle.load(_file)
-                    return self.open_pickled_data(data), label
-
-    def open_pickled_data(self, data_struct):
-        # print('open pickled, len data: {0}'.format(len('channel 0')))
-
-        time_period = 1.0 / data_struct['sample rate']
-
-        channel_keys = [x for x in data_struct.keys() if 'channel' in x]
-        # print('len data: {0}; len time series: {1}; channel keys = {2}'.format(
-        #     len_series, len(time_series), channel_keys
-        # ))
-        pd_data_struct = {}
-        for ch_key in channel_keys:
-            pd_data_struct[ch_key] = array.array('f')
-            for data_pt in data_struct[ch_key]:  # go through each data point
-                pd_data_struct[ch_key].append(data_pt*data_struct['counts to mVs'])
-        # print('new data:')
-        len_series = len(pd_data_struct['channel 0'])
-        ls_time_series = []
-        for i in range(len_series):
-            ls_time_series.append(i*time_period)
-        time_series = np.array(ls_time_series)
-        # time_series = np.arange(0, time_period * len_series, time_period)
-        pd_dataframe = pd.DataFrame(pd_data_struct, index=time_series)
-        # print('new data frame:')
-        # print(pd_dataframe)
-        return pd_dataframe
-
-
 
 
 if __name__ == '__main__':

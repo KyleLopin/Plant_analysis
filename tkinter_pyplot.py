@@ -83,6 +83,11 @@ class PyplotEmbed(tk.Frame):
         self.lines[index].set_color(_color)
         self.colors[index] = _color
 
+    def change_line_style(self, style, index):
+        if style != 'solid':
+            self.lines[index].set_linestyle(style)
+            self.lines[index].set_dashes((1, 5))
+
     def update_legend(self):
         """ Update the legend and redraw the graph """
         handle, labels = self.axis.get_legend_handles_labels()

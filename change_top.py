@@ -126,10 +126,12 @@ class ChangeDataLegend(tk.Toplevel):
         :param _master: master where the data is stored
         :param graph: graph area
         """
+
         for i, pick in enumerate(self.color_picks):
             _master.data_area.colors[i] = pick.get()
             graph.change_line_color(pick.get(), i)
-            graph.change_line_style(self.line_styles[i].get(), i)
+            # print("line styles: ", self.line_styles)
+            # graph.change_line_style(self.line_styles[i].get(), i)
             _master.data_area.labels[i] = self.legend_entries[i].get()
         graph.update_legend()
 

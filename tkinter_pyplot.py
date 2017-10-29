@@ -157,6 +157,12 @@ class PyplotEmbed(tk.Frame):
         # plt.plot(t + _data.index, y_fitted, linewidth=2, label="Check")
         fitted_line = self.axis.plot(_data.index,  y_fitted, linewidth=2, label='fitted')[0]
 
+    def toogle_data_decimation(self, data):
+        line: matplotlib.lines.Line2D  # type hint the for loop variable
+        for i, line in enumerate(self.lines):
+            line.set_xdata(data[i].index.values)
+            line.set_ydata(data[i])
+        self.canvas.show()
 
 
 def fitting_func_2a_2i_exp(t, amp1, amp2, amp3, amp4, tau1, tau2, tau3, tau4):

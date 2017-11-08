@@ -158,7 +158,7 @@ class PyplotEmbed(tk.Frame):
         fitted_line = self.axis.plot(_data.index,  y_fitted, linewidth=2, label='fitted')[0]
 
     def toogle_data_decimation(self, data):
-        line: matplotlib.lines.Line2D  # type hint the for loop variable
+        # line: matplotlib.lines.Line2D  # type hint the for loop variable
         for i, line in enumerate(self.lines):
             line.set_xdata(data[i].index.values)
             line.set_ydata(data[i])

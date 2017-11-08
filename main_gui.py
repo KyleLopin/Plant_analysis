@@ -72,6 +72,8 @@ class PlantAnalysisGUI(tk.Tk):
         self.display_type_button.pack(side='left')
         ttk.Button(frame, text='Change Line Style',
                    command=lambda: change_top.ChangeDataLegend(self)).pack(side='left')
+        self.norm_button = ttk.Button(frame, text="Time shifting turned On", command=self.toggle_data_normalized)
+        self.norm_button.pack(side='left')
 
     def toggle_display_type(self):
         print('setting display tupe')
@@ -88,6 +90,13 @@ class PlantAnalysisGUI(tk.Tk):
         else:
             raise Exception
 
+    def toggle_data_normalized(self):
+        if self.data.normed:
+            self.data.normed = False
+            self.norm_button.config(text="Time shifting turned Off")
+        else:
+            self.data.normed = True
+            self.norm_button.config(text="Time shifting turned On")
 
     def show_currents(self):
         pass
@@ -112,7 +121,6 @@ class PlantAnalysisGUI(tk.Tk):
         self.data.append(data, label)
         num_new_lines_to_add = data.shape[1]
         for i in range(1, num_new_lines_to_add+1):
-            # print('last label: ', self.last_label)
             if self.display_type == 'decimated':
                 self.data_area.plot(self.data.decimated_data[-i], data.keys()[-i]+" "+label)
             elif self.display_type == 'heavy':

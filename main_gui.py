@@ -73,7 +73,7 @@ class PlantAnalysisGUI(tk.Tk):
         self.display_type_button.pack(side='left')
         ttk.Button(frame, text='Change Line Style',
                    command=lambda: change_top.ChangeDataLegend(self)).pack(side='left')
-        self.norm_button = ttk.Button(frame, text="Time shifting turned On", command=self.toggle_data_normalized)
+        self.norm_button = ttk.Button(frame, text="Shifting turned On", command=self.toggle_data_normalized)
         self.norm_button.pack(side='left')
 
     def toggle_display_type(self):
@@ -94,10 +94,10 @@ class PlantAnalysisGUI(tk.Tk):
     def toggle_data_normalized(self):
         if self.data.normed:
             self.data.normed = False
-            self.norm_button.config(text="Time shifting turned Off")
+            self.norm_button.config(text="Shifting turned Off")
         else:
             self.data.normed = True
-            self.norm_button.config(text="Time shifting turned On")
+            self.norm_button.config(text="Shifting turned On")
 
     def show_currents(self):
         pass
@@ -129,13 +129,13 @@ class PlantAnalysisGUI(tk.Tk):
                 self.data_area.plot(self.data.heavy_decimate_data[-i], data.keys()[-i] + " " + label,
                                     color=COLORS[self.color_index])
             self.make_data_summary_frame(self.data, -i, data.keys()[-i]+" "+label)
-            self.color_index += 1
+            self.color_index = (self.color_index + 1) % 9
 
     def make_data_analysis_frame(self, tk_frame):
         pass
 
     def make_data_summary_frame(self, data: pyplot_data.PyplotData_v2, _index: int, label: str):
-        print('make summery fram index: ', _index)
+        print('make summery frame index: ', _index)
         print('maxes: ', data.average_max)
         new_frame = tk.Frame(self.bottom_frame, height=25)
         new_frame.pack(side='top', fill=tk.X)

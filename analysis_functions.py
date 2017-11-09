@@ -32,10 +32,14 @@ def calculate_max_amplitudes(data: pd.DataFrame):
     max_amps.append(float(data[max_range[0]:max_range[1]].mean()))
     return max_amps
 
+
 def calculate_max_amplitude(data: pd.DataFrame, df_key):
+    print('calc max key: ', df_key)
     max = data[df_key].min()
     max_id = data[df_key].idxmin()
+    print('max id: ', max_id)
     max_range = [max_id - 0.025, max_id + 0.025]  # get data 25 millisec before or after max point
+    print('max data: ', max)
     return float(data[max_range[0]:max_range[1]].mean())
 
 

@@ -31,9 +31,11 @@ class PyplotData_v2(object):
         data.index = data.index.map(float)
         for i, data_key in enumerate(data):  # hackish
             print('append i: ', i)
+
             if i == 0:
                 self._append_single_series(data, data_key)
             else:
+                print('time shift: ', self.time_start, self.time_start[-1])
                 self._append_single_series(data, data_key, time_shift=self.time_start[-1])
 
     def _append_single_series(self, data, key, time_shift=None):
@@ -55,7 +57,7 @@ class PyplotData_v2(object):
 
         heavy_rolling_mean = baseline_adjuct.rolling(1000).mean()
         # calculate when the action potential starts
-        max_amp = funcs.calculate_max_amplitude(baseline_adjuct, key)  #find the max first
+        max_amp = funcs.calculate_max_amplitude(baseline_adjuct.rolling(40).mean(), key)  # find the max first
         self.average_max.append(max_amp)
         threshold = max_amp*START_THRESHOLD_RATIO  # calculate the threshold where the AP starts
         hold = heavy_rolling_mean[key][1:] < threshold  # use heavy roll to eliminate picking

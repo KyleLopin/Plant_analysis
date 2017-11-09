@@ -45,10 +45,12 @@ class PyplotEmbed(tk.Frame):
         self.canvas.draw()
         self.canvas.get_tk_widget().pack(side='left', fill=tk.BOTH, expand=1)
 
-    def plot(self, data, _label):
+    def plot(self, data, _label, color=None):
         # self.data.plot(ax=self.graph_area.axis, label='channel {0}'.format(self.index))
         # line = self.axis.plot(data.index, data['voltage'], label=_label)[0]
         line = self.axis.plot(data.index, data, label=_label)[0]
+        if color:
+            line.set_color(color)
         self.colors.append(line.get_color())
         self.labels.append(_label)
         self.lines.append(line)

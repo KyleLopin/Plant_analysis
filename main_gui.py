@@ -25,12 +25,13 @@ PROGRAM_NAME = "Data Analysis"
 
 logging.basicConfig(level=logging.DEBUG,
                     format="%(levelname)s %(module)s %(lineno)d: %(message)s")
-
+COLORS = ['firebrick', 'darkgreen', 'navy', 'red', 'green', 'blue', 'lightsalmon', 'lightgreen', 'cornflowerblue']
 
 class PlantAnalysisGUI(tk.Tk):
 
     def __init__(self, parent=None):
         tk.Tk.__init__(self, parent)
+        self.color_index = 0
         self.last_dir = None
         self.display_type = 'decimated'
         self.data = pyplot_data.PyplotData_v2()  # make a list of panda data frames
@@ -122,19 +123,24 @@ class PlantAnalysisGUI(tk.Tk):
         num_new_lines_to_add = data.shape[1]
         for i in range(1, num_new_lines_to_add+1):
             if self.display_type == 'decimated':
-                self.data_area.plot(self.data.decimated_data[-i], data.keys()[-i]+" "+label)
+                self.data_area.plot(self.data.decimated_data[-i], data.keys()[-i]+" "+label,
+                                    color=COLORS[self.color_index])
             elif self.display_type == 'heavy':
-                self.data_area.plot(self.data.heavy_decimate_data[-i], data.keys()[-i] + " " + label)
-            self.make_data_summary_frame(self.data, i-1, data.keys()[-i]+" "+label)
+                self.data_area.plot(self.data.heavy_decimate_data[-i], data.keys()[-i] + " " + label,
+                                    color=COLORS[self.color_index])
+            self.make_data_summary_frame(self.data, -i, data.keys()[-i]+" "+label)
+            self.color_index += 1
 
     def make_data_analysis_frame(self, tk_frame):
         pass
 
     def make_data_summary_frame(self, data: pyplot_data.PyplotData_v2, _index: int, label: str):
+        print('make summery fram index: ', _index)
+        print('maxes: ', data.average_max)
         new_frame = tk.Frame(self.bottom_frame, height=25)
         new_frame.pack(side='top', fill=tk.X)
         tk.Label(new_frame, text="baseline = {0:.2f}      maximum amplitude = {1:.2f}"
-                 .format(data.baselines[- _index], data.average_max[- _index])).pack(side='left')
+                 .format(data.baselines[_index], data.average_max[_index])).pack(side='left')
 
         # make a spinbox to let the user move the time series around
         time_shifter = tk.DoubleVar()
@@ -145,7 +151,7 @@ class PlantAnalysisGUI(tk.Tk):
         tk.Spinbox(new_frame, textvariable=time_shifter,
                    from_=-100, to=100, increment=0.01,
                    # index - 2 because the numbers start from 1 not 0 and it has been incremented already
-                   command=lambda: self.data_area.time_shift(index-2, time_shifter.get())
+                   command=lambda: self.data_area.time_shift(index, time_shifter.get())
                     ).pack(side='left')
         tk.Label(new_frame, text=label).pack(side='left')
         self.data_info_frames.append(new_frame)
